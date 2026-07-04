@@ -59,3 +59,42 @@ jobs:
     secrets:
       # private key for the App that authors the release PR (same App as /merge)
       app-private-key: ${{ secrets.FF_MERGE_PRIVATE_KEY }}
+
+  # Fast-forward the `release` branch to the freshly tagged commit. Consumers pin
+  # the `make` submodule to this branch (`.gitmodules` → `branch = release`), so
+  # moving the ref here is what actually delivers a cut release to the fleet;
+  # Dependabot's gitsubmodule ecosystem then proposes the bump downstream. Gated on
+  # release_created so it fires only on the merge release-please turns into a tag,
+  # not on every push to main. The push is deliberately non-force: a fast-forward is
+  # the invariant, so if `release` ever diverged from the tagged history the push
+  # fails loudly rather than rewriting what consumers have pinned.
+  #
+  # `release` is protected by a ruleset, so the push goes out under the FF Merge App
+  # token (same App as the release PR and /merge) — it is on the ruleset's bypass
+  # list, whereas GITHUB_TOKEN's github-actions bot is not. The App token does the
+  # privileged work; the caller grants GITHUB_TOKEN nothing.
+  push-release-branch:
+    needs: release
+    if: ${{ needs.release.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Mint a github app installation token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.FF_MERGE_CLIENT_ID }}
+          private-key: ${{ secrets.FF_MERGE_PRIVATE_KEY }}
+          # only needs to move the branch ref
+          permission-contents: write
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          # push under the App token (ruleset bypass), and fetch full history so the
+          # tagged release commit is present locally to push
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+      - name: Fast-forward release branch to the tagged commit
+        env:
+          SHA: ${{ needs.release.outputs.sha }}
+        run: git push origin "${SHA}:refs/heads/release"
