@@ -1,0 +1,76 @@
+# Copyright 2026 BitWise Media Group Ltd
+# SPDX-License-Identifier: MIT
+
+# Daily cooldown updater for the pinned Go tools — the Dependabot version-update
+# this library can't get from the gomod ecosystem any more (the pins live in
+# .<tool>-version files, not a go.mod). scripts/update-go-tools.sh bumps each pin
+# to the newest release that is at least 7 days old; this workflow runs it on a
+# schedule and rolls the result into a single pull request on a stable branch
+# (force-updated each run, so the PR always reflects the current set of available
+# updates). The bumps land as `fix(deps):` so release-please cuts a patch and the
+# new pins propagate to consumers via their `make` submodule.
+#
+# Human-reviewed by design (supply-chain sensitive): the PR is authored by
+# GITHUB_TOKEN and is not auto-merged.
+name: Update Go Tools
+
+on:
+  schedule:
+    - cron: "0 7 * * *" # daily at 07:00 UTC
+  workflow_dispatch:
+    inputs:
+      cooldown-days:
+        description: Minimum age (days) a release must have before it is adopted.
+        required: false
+        default: "7"
+
+permissions:
+  # push the update branch
+  contents: write
+  # open/update the pull request
+  pull-requests: write
+
+concurrency:
+  group: update-go-tools
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH: bot/update-go-tools
+      COOLDOWN_DAYS: ${{ github.event.inputs.cooldown-days || '7' }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        # keep the token so `git push` can update the branch below
+
+      - name: Apply available tool updates
+        id: update
+        run: ./scripts/update-go-tools.sh
+
+      - name: Open or update pull request
+        if: steps.update.outputs.updates != ''
+        env:
+          UPDATES: ${{ steps.update.outputs.updates }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git switch -C "$BRANCH"
+          git add -- '.*-version'
+          git commit -m 'fix(deps): update pinned go tool versions' -m "$UPDATES"
+          git push --force origin "$BRANCH" # bot-owned branch, safe to reset
+
+          body="Automated Go tool version bumps (newest release at least ${COOLDOWN_DAYS} days old):
+
+          ${UPDATES}"
+
+          if gh pr view "$BRANCH" --json state --jq '.state' 2>/dev/null | grep -qx OPEN; then
+            gh pr edit "$BRANCH" --body "$body"
+          else
+            gh pr create --base "${GITHUB_REF_NAME}" --head "$BRANCH" \
+              --title 'fix(deps): update pinned go tool versions' --body "$body"
+          fi
