@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: MIT
 
 # The make library dogfoods its own markdown-lib archetype. This thin caller runs
-# the reusable CI, which executes the canonical `make lint` / `build` / `test`
-# gates — the Makefile forwards each to `mise run <target>`, here addlicense +
-# prettier + markdownlint + actionlint, with build/test as no-op tasks. The
-# pinned tooling installs via mise from the repo-root config.toml/mise.lock (the
-# file consumers load as .mise/config.toml); the reusable workflow's Setup mise
-# step puts a pinned mise on PATH.
+# the reusable CI (v5+: mise-task aware), which discovers the canonical tasks the
+# repo defines via `mise tasks ls --name-only` and runs `make <target>` for each —
+# here only `lint` (addlicense + prettier + markdownlint + actionlint); build and
+# test don't exist in this archetype and are skipped. The pinned tooling installs
+# via mise from the repo-root config.toml/mise.lock (the file consumers load as
+# .mise/config.toml); the reusable workflow's Setup mise step puts a pinned mise
+# on PATH.
 #
 # Pinned to a full commit SHA (tag in the comment); Dependabot keeps it fresh.
 name: Continuous Integration
@@ -24,7 +25,7 @@ permissions:
 
 jobs:
   ci:
-    uses: bitwise-media-group/github-workflows/.github/workflows/ci.yaml@a28e6738bc4f912322f9e66e9e90e7de789c4ad3 # v4.3.1
+    uses: bitwise-media-group/github-workflows/.github/workflows/ci.yaml@ee856f73ecea9b0c2c989d3a6aa585774b0d2a38 # v5.0.0
     with:
-      # nothing to unit-test here (build/test are no-ops), so skip the Codecov upload
+      # nothing to unit-test here (no test task), so skip the Codecov upload
       coverage: false
