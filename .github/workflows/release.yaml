@@ -32,7 +32,7 @@ permissions: {}
 
 jobs:
   release:
-    uses: bitwise-media-group/github-workflows/.github/workflows/release.yaml@ee856f73ecea9b0c2c989d3a6aa585774b0d2a38 # v5.0.0
+    uses: bitwise-media-group/github-workflows/.github/workflows/release.yaml@3636c830f0b00c591f8b27401c45786d08466f18 # v6.0.0
     # Ceiling for the reusable workflow's jobs. GitHub resolves a reusable
     # workflow's permissions as the union of every job and ignores `if:`, so the
     # caller must grant the (here-skipped) goreleaser and docs jobs' scopes too —
@@ -50,6 +50,8 @@ jobs:
       attestations: write
       # artifact storage record for the attestation
       artifact-metadata: write
+      # push container images to ghcr (goreleaser dockers_v2, when configured)
+      packages: write
       # publish the docs site to GitHub Pages (docs job, gated on zensical.toml)
       pages: write
     with:
