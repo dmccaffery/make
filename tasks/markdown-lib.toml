@@ -19,7 +19,7 @@ run = [{ task = "fmt-prose" }, { task = "license" }]
 
 [lint]
 description = "prose lint (prettier + markdownlint) + license check"
-run = [{ task = "license-check" }, { task = "lint-prose" }]
+run = [{ task = "license-check" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }]
 
 [ci]
 description = "the gates the reusable CI workflow runs"

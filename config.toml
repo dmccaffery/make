@@ -38,6 +38,13 @@
 # silently prefers aube wherever it happens to be installed — same resolution on
 # every machine matters more than install speed for two packages.
 #
+# grype and kubescape pull external data at runtime rather than at install:
+# grype fetches its vulnerability database on first use (~200 MB, cached in
+# ~/.cache/grype) and kubescape its controls artifacts (~/.kubescape), so the
+# first container/deploy lint on a machine needs network. hadolint, helm and
+# shellcheck are plain release binaries (helm ships via get.helm.sh rather
+# than GitHub releases), checksum-locked like everything else.
+#
 # Updates: the daily update-tools workflow runs `mise upgrade --bump`, which
 # honours minimum_release_age below — a release must be at least 7 days old
 # before it is adopted (Dependabot-style cooldown), giving the ecosystem time to
@@ -54,11 +61,16 @@ npm.package_manager = "npm"
 [tools]
 go = "1.26.5"
 "node" = "24.18.0"
+"aqua:anchore/grype" = "0.115.0"
 "aqua:anchore/syft" = "1.45.1"
 "aqua:golangci/golangci-lint" = "2.12.2"
 "aqua:goreleaser/goreleaser" = "2.16.0"
 "aqua:gotestyourself/gotestsum" = "1.13.0"
+"aqua:hadolint/hadolint" = "2.14.0"
 "aqua:hashicorp/terraform" = "1.15.7"
+"aqua:helm/helm" = "4.2.3"
+"aqua:koalaman/shellcheck" = "0.11.0"
+"aqua:kubescape/kubescape" = "4.0.10"
 "aqua:rhysd/actionlint" = "1.7.12"
 "aqua:terraform-docs/terraform-docs" = "0.24.0"
 "aqua:terraform-linters/tflint" = "0.63.1"
@@ -88,6 +100,11 @@ version_pkg = ""
 # terraform: wrapper that injects secrets/env around terraform — the pinned
 # dotty by default. Set tf_run = "" to call terraform directly.
 tf_run = "dotty env run --"
+# container/deploy lint: minimum severity that fails the gate — grype
+# --fail-on for Dockerfile base images, kubescape --severity-threshold for
+# helm charts and kustomize directories. low|medium|high|critical.
+grype_fail_on = "high"
+kubescape_severity = "high"
 
 # Universal tasks shared by every archetype. Each runs in the invoker's
 # directory ({{cwd}}), matching where make recipes used to run. Helper tasks
@@ -170,3 +187,37 @@ prettier --config "$pcfg" --ignore-path .gitignore --ignore-path "$pign" --no-er
 description = "lint .github/workflows with actionlint"
 dir = "{{cwd}}"
 run = "actionlint"
+
+# Container/deploy/shell lint, runtime-detected: each helper script probes
+# for its marker files from the repo root and no-ops silently when the repo
+# has none, so every archetype carries these unconditionally. Items found
+# but not checkable (a kustomize Component, an unresolvable ${ARG} base
+# image) are skipped with a one-line message, never silently. The logic
+# lives in hack/ (shellcheck-linted, including by itself) rather than
+# inline; .mise/hack/ resolves via the same submodule/symlink inversion as
+# config.toml itself.
+
+[tasks.lint-docker]
+hide = true
+dir = "{{config_root}}"
+run = 'GRYPE_FAIL_ON="{{vars.grype_fail_on}}" ./.mise/hack/lint-docker.sh'
+
+[tasks.lint-helm]
+hide = true
+dir = "{{config_root}}"
+run = 'KUBESCAPE_SEVERITY="{{vars.kubescape_severity}}" ./.mise/hack/lint-helm.sh'
+
+[tasks.lint-kustomize]
+hide = true
+dir = "{{config_root}}"
+run = 'KUBESCAPE_SEVERITY="{{vars.kubescape_severity}}" ./.mise/hack/lint-kustomize.sh'
+
+[tasks.lint-shell]
+hide = true
+dir = "{{config_root}}"
+run = "./.mise/hack/lint-shell.sh"
+
+# The composite every archetype's `lint` carries.
+[tasks.lint-containers]
+hide = true
+run = [{ task = "lint-docker" }, { task = "lint-helm" }, { task = "lint-kustomize" }]

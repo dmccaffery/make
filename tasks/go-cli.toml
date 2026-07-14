@@ -120,7 +120,7 @@ run = [{ task = "go-fmt" }, { task = "fmt-prose" }, { task = "license" }]
 
 [lint]
 description = "all check-mode static analysis"
-run = [{ task = "license-check" }, { task = "go-lint" }, { task = "lint-prose" }]
+run = [{ task = "license-check" }, { task = "go-lint" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }]
 
 [build]
 description = "build the application binary"

@@ -64,7 +64,7 @@ run = [{ task = "tf-fmt" }, { task = "fmt-prose" }]
 
 [lint]
 description = "terraform validate + tflint + prose lint"
-run = [{ task = "tf-lint" }, { task = "lint-prose" }]
+run = [{ task = "tf-lint" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }]
 
 [docs]
 description = "generate module docs (terraform-docs)"

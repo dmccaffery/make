@@ -14,9 +14,12 @@ Makefile-fragment mechanics are superseded by the mise-task layout described her
 toolchain/                # this repo == the consumer's .mise/ directory
 ├── config.toml           # shared config: [settings], [tools] pins, [vars] knob
 │                         #   defaults, and the universal tasks (license, prose
-│                         #   lint, commit, actionlint); consumers load it
-│                         #   natively as .mise/config.toml
+│                         #   lint, commit, actionlint, container/deploy/shell
+│                         #   lint); consumers load it natively as
+│                         #   .mise/config.toml
 ├── mise.lock              # per-platform sha256 + provenance for every pin
+├── hack/                  # shell scripts behind the universal lint tasks
+│                          #   (hadolint+grype, helm+kubescape, shellcheck)
 ├── tasks/                 # one self-contained task file per archetype
 │   ├── go-cli.toml        #   go build/test/lint/release + zensical docs
 │   ├── node-action.toml   #   biome + tsc + rollup + vitest
@@ -94,12 +97,13 @@ precedes `lint` inside `pr`.
 
 ## Developer tools
 
-Every tool (`addlicense`, `golangci-lint`, `govulncheck`, `gotestsum`, `goreleaser`, `syft`, `terraform`, `tflint`,
-`terraform-docs`, `actionlint`, `evolve`, `dotty`, `prettier`, `markdownlint-cli2`) is pinned in `config.toml` with
-per-platform sha256 checksums (and, where the publisher provides it, cosign/SLSA/GitHub-attestation provenance) locked
-in `mise.lock`. Tasks run with the pinned tools already on PATH — there is no `.bin/`, no `tools/go.mod`, no
-`package.json` for linters, and no tool-path plumbing anywhere. mise installs a tool into its shared per-machine store
-the first time a task needs it (verifying the checksum) and reuses it across every repo.
+Every tool (`addlicense`, `golangci-lint`, `govulncheck`, `gotestsum`, `goreleaser`, `syft`, `grype`, `hadolint`,
+`helm`, `kubescape`, `shellcheck`, `terraform`, `tflint`, `terraform-docs`, `actionlint`, `evolve`, `dotty`, `prettier`,
+`markdownlint-cli2`) is pinned in `config.toml` with per-platform sha256 checksums (and, where the publisher provides
+it, cosign/SLSA/GitHub-attestation provenance) locked in `mise.lock`. Tasks run with the pinned tools already on PATH —
+there is no `.bin/`, no `tools/go.mod`, no `package.json` for linters, and no tool-path plumbing anywhere. mise installs
+a tool into its shared per-machine store the first time a task needs it (verifying the checksum) and reuses it across
+every repo.
 
 - The tooling runtimes themselves are pins (`go`, `node`), provisioned by mise — no system Go or Node is needed.
 - Bumping a tool for the **whole fleet** is one commit here (the daily updater below, or a hand-edit of `config.toml` +
@@ -119,10 +123,10 @@ with `mise upgrade --bump && mise lock` in this directory (or `mise outdated` to
 
 Two tiers, replacing the old before-the-include make variables:
 
-| tier                           | where                   | examples                                                                                         |
-| ------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| structural (set once per repo) | root `mise.toml [vars]` | `app`, `app_pkg`, `build_tags`, `version_pkg`, `license_holder`, `tf_run`                        |
-| per-invocation (runtime)       | environment variables   | `VERSION`, `COMMIT`, `DATE`, `LDFLAGS`, `MODULE`, `FUZZ`, `FUZZTIME`, `FUZZ_PKG`, `NPM_CI_FLAGS` |
+| tier                           | where                   | examples                                                                                                         |
+| ------------------------------ | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| structural (set once per repo) | root `mise.toml [vars]` | `app`, `app_pkg`, `build_tags`, `version_pkg`, `license_holder`, `tf_run`, `grype_fail_on`, `kubescape_severity` |
+| per-invocation (runtime)       | environment variables   | `VERSION`, `COMMIT`, `DATE`, `LDFLAGS`, `MODULE`, `FUZZ`, `FUZZTIME`, `FUZZ_PKG`, `NPM_CI_FLAGS`                 |
 
 `make build VERSION=1.2.3` still works — make exports command-line variables to the forwarded `mise run`, and the go-cli
 scripts also accept the old spellings (`APP`, `APP_PKG`, …) from the environment.
@@ -138,6 +142,20 @@ scripts also accept the old spellings (`APP`, `APP_PKG`, …) from the environme
   `.prettierignore` / `.markdownlint-cli2.yaml`, read from `.mise/` — a repo that commits its own copy of one of those
   files overrides that file wholesale. Node Action **npm scripts** are named `check`, `check:fix`, `typecheck`, `build`,
   `test:coverage` (biome + rollup + vitest); biome owns the code, prettier + markdownlint own the markdown.
+- **Container, deploy, and shell artifacts are linted when present, with zero per-repo config**: every archetype's
+  `lint` runs runtime-detected passes (scripts in `hack/`) that no-op silently when a repo has none of the artifacts. A
+  root `Dockerfile`/`Dockerfile.*` gets hadolint plus a grype vulnerability scan of the external base images named in
+  its `FROM` lines (pulled straight from the registry — no docker daemon; build-stage aliases, `scratch`, and
+  unresolvable `${ARG}` refs are skipped, simple `ARG` defaults resolved). Each `helm/*/Chart.yaml` chart gets
+  `helm lint` plus a kubescape misconfiguration scan; every `kustomization.yaml`/`.yml` directory gets a kubescape scan
+  (`kind: Component` dirs are skipped — they only build through an overlay). Any `*.sh` under `scripts/` or `hack/` gets
+  shellcheck. Gates fail at **high** severity by default (`grype_fail_on` / `kubescape_severity` in `[vars]`); grype
+  passes `--only-fixed`, so only vulnerabilities an updated base image would fix break the build. Repos silence accepted
+  findings with their own `.grype.yaml` / `.hadolint.yaml` (auto-loaded by the tools from the repo root) or a
+  `.kubescape/exceptions.json` (passed as `--exceptions`). hadolint fails on any warning by default — use inline
+  `# hadolint ignore=…` comments or `.hadolint.yaml`. First run on a machine downloads grype's vulnerability database
+  (~200 MB, cached in `~/.cache/grype`) and kubescape's controls artifacts (`~/.kubescape`), so it needs network; the
+  scans never contact a Kubernetes cluster (`KUBECONFIG` is pointed at nothing).
 - **This repo's own layout is inverted**: `config.toml` sits at the root (it _is_ the consumer's `.mise/`), the dogfood
   archetype include lives in the root `mise.toml`, and `.mise/` here contains symlinks back to the root files so mise
   resolves the tools the same way it does in a consumer.

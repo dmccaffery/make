@@ -59,7 +59,7 @@ run = [{ task = "action-fmt" }, { task = "fmt-prose" }]
 
 [lint]
 description = "biome check + tsc --noEmit + prose lint"
-run = [{ task = "action-lint" }, { task = "lint-prose" }]
+run = [{ task = "action-lint" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }]
 
 [build]
 description = "bundle the action into dist/ (rollup)"

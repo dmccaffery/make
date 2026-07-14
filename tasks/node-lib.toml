@@ -37,7 +37,7 @@ run = [{ task = "fmt-prose" }]
 
 [lint]
 description = "type-check the library (tsc --noEmit) + prose lint"
-run = [{ task = "lib-lint" }, { task = "lint-prose" }]
+run = [{ task = "lib-lint" }, { task = "lint-containers" }, { task = "lint-shell" }, { task = "lint-prose" }]
 
 [build]
 description = "build the library bundle (tsup)"
