@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/bitwise-media-group/toolchain/compare/v2.0.0...v2.1.0) (2026-07-14)
+
+
+### Features
+
+* lint docker/helm/kustomize/shell artifacts when present ([6a18943](https://github.com/bitwise-media-group/toolchain/commit/6a189436678e2c0a5abb48e78e3fe7b36584a951))
+
+
+### Bug Fixes
+
+* **tasks:** ignore commit.sh in the house license defaults ([247b20e](https://github.com/bitwise-media-group/toolchain/commit/247b20e25b44fc3c30040d608b496f68955c9caf))
+
 ## [2.0.0](https://github.com/bitwise-media-group/make/compare/v1.1.0...v2.0.0) (2026-07-10)
 
 
