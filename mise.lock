@@ -249,36 +249,36 @@ url = "https://github.com/hadolint/hadolint/releases/download/v2.14.0/hadolint-w
 url_api = "https://api.github.com/repos/hadolint/hadolint/releases/assets/295944079"
 
 [[tools."aqua:hashicorp/terraform"]]
-version = "1.15.7"
+version = "1.15.8"
 backend = "aqua:hashicorp/terraform"
 
 [tools."aqua:hashicorp/terraform"."platforms.linux-arm64"]
-checksum = "sha256:7a9e92105ede978cf9049a2fbe53dfe67c6a8da4b4d7f613d89e7dd7c63ec40d"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_linux_arm64.zip"
+checksum = "sha256:8891e9dcedc9e3b8950bc6af9d4d8af1f4cfade3062f53b9dc403a89f6ce8c9c"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_linux_arm64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.linux-arm64-musl"]
-checksum = "sha256:7a9e92105ede978cf9049a2fbe53dfe67c6a8da4b4d7f613d89e7dd7c63ec40d"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_linux_arm64.zip"
+checksum = "sha256:8891e9dcedc9e3b8950bc6af9d4d8af1f4cfade3062f53b9dc403a89f6ce8c9c"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_linux_arm64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.linux-x64"]
-checksum = "sha256:73bbb8f5188ad75d4fb853fd100ae4d7e146ef7af7db18776109642fdb7759d2"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_linux_amd64.zip"
+checksum = "sha256:d25ce7b6902013ad905db3d2eab0be4cd905887fe88b81a6171b8d5503c31f3d"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_linux_amd64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.linux-x64-musl"]
-checksum = "sha256:73bbb8f5188ad75d4fb853fd100ae4d7e146ef7af7db18776109642fdb7759d2"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_linux_amd64.zip"
+checksum = "sha256:d25ce7b6902013ad905db3d2eab0be4cd905887fe88b81a6171b8d5503c31f3d"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_linux_amd64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.macos-arm64"]
-checksum = "sha256:711791bf41365137a9a4adbf3e4c4a18dd7389d45c6a3039e3c6946bc750080e"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_darwin_arm64.zip"
+checksum = "sha256:f210110c5698b94d803a7a63cdb0251b5455c150841478808e2bbb343f95ed68"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_darwin_arm64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.macos-x64"]
-checksum = "sha256:7f7a055e4d0c9dddb19cb14058fc885df139fdd4e987fffff6bf82993ac6a1a3"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_darwin_amd64.zip"
+checksum = "sha256:e2e812e783771159bf758fd4e55d6dc9bb08f63e2af2c63d212721807a02c5dc"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_darwin_amd64.zip"
 
 [tools."aqua:hashicorp/terraform"."platforms.windows-x64"]
-checksum = "sha256:1644891f1d02dea989daed9a39c564ebdc80e13c9a7e42e713fba84d7f53b8f6"
-url = "https://releases.hashicorp.com/terraform/1.15.7/terraform_1.15.7_windows_amd64.zip"
+checksum = "sha256:2ff41d2129afb1982733c132c61a8d6ef038f879f3aeede7fc28b8b8b24acf02"
+url = "https://releases.hashicorp.com/terraform/1.15.8/terraform_1.15.8_windows_amd64.zip"
 
 [[tools."aqua:helm/helm"]]
 version = "4.2.3"
@@ -528,92 +528,6 @@ url = "https://github.com/terraform-linters/tflint/releases/download/v0.63.1/tfl
 url_api = "https://api.github.com/repos/terraform-linters/tflint/releases/assets/437446181"
 provenance = "github-attestations"
 
-[[tools."github:bitwise-media-group/dotty"]]
-version = "0.1.1"
-backend = "github:bitwise-media-group/dotty"
-
-[tools."github:bitwise-media-group/dotty"."platforms.linux-arm64"]
-checksum = "sha256:821f8a11dc311ec69186aee60afb8fbe668be6c1686cc16b67965c6eb1fda8a2"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680539"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/dotty"."platforms.linux-arm64-musl"]
-checksum = "sha256:821f8a11dc311ec69186aee60afb8fbe668be6c1686cc16b67965c6eb1fda8a2"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680539"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/dotty"."platforms.linux-x64"]
-checksum = "sha256:bc10a258e46e9f035c99e508bead34903889ac8ace01d1f6889eb4e59915e7bc"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680542"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/dotty"."platforms.linux-x64-musl"]
-checksum = "sha256:bc10a258e46e9f035c99e508bead34903889ac8ace01d1f6889eb4e59915e7bc"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680542"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/dotty"."platforms.macos-arm64"]
-checksum = "sha256:8ae250b0f03043f49c69cf437973dda07d478fd16f2e01b1fc548db5e026c60d"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680538"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/dotty"."platforms.macos-x64"]
-checksum = "sha256:d710b3afd91571ecf7ae811cdfbe49aae23dc5661b2d6c9a1004445541449f68"
-url = "https://github.com/bitwise-media-group/dotty/releases/download/v0.1.1/dotty_0.1.1_darwin_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/dotty/releases/assets/462680541"
-provenance = "github-attestations"
-
-[[tools."github:bitwise-media-group/evolve"]]
-version = "0.5.1"
-backend = "github:bitwise-media-group/evolve"
-
-[tools."github:bitwise-media-group/evolve"."platforms.linux-arm64"]
-checksum = "sha256:b18dd89c196e21ae8cdc5f3a5e3028935239e6d14e417dfc76ddbe4de138fa85"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810310"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.linux-arm64-musl"]
-checksum = "sha256:b18dd89c196e21ae8cdc5f3a5e3028935239e6d14e417dfc76ddbe4de138fa85"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810310"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.linux-x64"]
-checksum = "sha256:00b5daaac648bc3643c88f7f54115fe18e4f81ef9cef9c795b52874034af812b"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810318"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.linux-x64-musl"]
-checksum = "sha256:00b5daaac648bc3643c88f7f54115fe18e4f81ef9cef9c795b52874034af812b"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810318"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.macos-arm64"]
-checksum = "sha256:7d7910bb036657ed9a4c981a7593b44d092e8be52294bbd998d753958c85c612"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810302"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.macos-x64"]
-checksum = "sha256:5c1db5275af1d0707e87084901b12d06e7342b892a66660fe1d447f49036a865"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_darwin_amd64.tar.gz"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810315"
-provenance = "github-attestations"
-
-[tools."github:bitwise-media-group/evolve"."platforms.windows-x64"]
-checksum = "sha256:d1508b510a41c1910218d754fa4222e71fae92ca3d25108078b63c70bf0752ee"
-url = "https://github.com/bitwise-media-group/evolve/releases/download/v0.5.1/evolve_0.5.1_windows_amd64.zip"
-url_api = "https://api.github.com/repos/bitwise-media-group/evolve/releases/assets/465810312"
-provenance = "github-attestations"
-
 [[tools."github:google/addlicense"]]
 version = "1.2.0"
 backend = "github:google/addlicense"
@@ -686,45 +600,45 @@ checksum = "sha256:97e6b2a833b6d89f9ff17d25419ac0a7e3b482a044e9ab18cdef834bd834f
 url = "https://dl.google.com/go/go1.26.5.windows-amd64.zip"
 
 [[tools."go:golang.org/x/vuln/cmd/govulncheck"]]
-version = "1.5.0"
+version = "1.6.0"
 backend = "go:golang.org/x/vuln/cmd/govulncheck"
 
 [[tools.node]]
-version = "26.4.0"
+version = "26.5.0"
 backend = "core:node"
 
 [tools.node."platforms.linux-arm64"]
-checksum = "sha256:773d9ec67266838270ddc105c2548ae8aaff28bc8fe6f34c55d1094043c4165e"
-url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-linux-arm64.tar.gz"
+checksum = "sha256:308e5fe89a82461ba5a6cf15ff5221b2cdbd7ae87600aa72bb3c3fbdc66412d1"
+url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-linux-arm64.tar.gz"
 
 [tools.node."platforms.linux-arm64-musl"]
-checksum = "sha256:d2ad8c6e9fa955edf0337078c1d1acda345d36a84986b218cce3cfd1d2d26920"
-url = "https://unofficial-builds.nodejs.org/download/release/v26.4.0/node-v26.4.0-linux-arm64-musl.tar.gz"
+checksum = "sha256:1ab31aef6561191693f366cacd75bbcefa0301e49a18bc05554c21893bbdb490"
+url = "https://unofficial-builds.nodejs.org/download/release/v26.5.0/node-v26.5.0-linux-arm64-musl.tar.gz"
 
 [tools.node."platforms.linux-x64"]
-checksum = "sha256:f221dab30d0e9d544332f06fbee2c62186c97d864d5cac8482dba34f1e38b8dc"
-url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-linux-x64.tar.gz"
+checksum = "sha256:22b5f47ad6ae78837e4c2b846019965ce1a06ba143de176102294a1bf44fc677"
+url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-linux-x64.tar.gz"
 
 [tools.node."platforms.linux-x64-musl"]
-checksum = "sha256:554e960f6570bd3d1987f5170d8f2a373a21818581a8d307b697e7839988314a"
-url = "https://unofficial-builds.nodejs.org/download/release/v26.4.0/node-v26.4.0-linux-x64-musl.tar.gz"
+checksum = "sha256:00f1398411a4216c5a6ecaad3b825a0da5ec00e79ee8c173ab65a094d97b9ad8"
+url = "https://unofficial-builds.nodejs.org/download/release/v26.5.0/node-v26.5.0-linux-x64-musl.tar.gz"
 
 [tools.node."platforms.macos-arm64"]
-checksum = "sha256:4f4fbcacf6b1ff1a95deedba7bd7b2d79efecaa53a8ecb0530546dc9063fefbc"
-url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-darwin-arm64.tar.gz"
+checksum = "sha256:ee920559aaa2391569cff4d737e3b83963430e3a14dedd91bfe0ff53171b5af9"
+url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-darwin-arm64.tar.gz"
 
 [tools.node."platforms.macos-x64"]
-checksum = "sha256:eb3bdd8dec3ff2558ee10e284da7d2a3865af0cbda21f06d397b0265837c641e"
-url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-darwin-x64.tar.gz"
+checksum = "sha256:98293394c945a24e64e00b4177bf075ec963ea70b34d1d2e24bd4a71716d334f"
+url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-darwin-x64.tar.gz"
 
 [tools.node."platforms.windows-x64"]
-checksum = "sha256:5f87d038c6ec442aa46b9126f8ca170acbd2f3b9b9152ca798cf54596a31e214"
-url = "https://nodejs.org/dist/v26.4.0/node-v26.4.0-win-x64.zip"
+checksum = "sha256:d3b2277dbcccfdf24ef6302928f64f484cff1d77a6d3caa3a28f4d20ce9158f6"
+url = "https://nodejs.org/dist/v26.5.0/node-v26.5.0-win-x64.zip"
 
 [[tools."npm:markdownlint-cli2"]]
 version = "0.23.0"
 backend = "npm:markdownlint-cli2"
 
 [[tools."npm:prettier"]]
-version = "3.9.4"
+version = "3.9.5"
 backend = "npm:prettier"

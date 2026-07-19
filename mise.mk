@@ -38,7 +38,8 @@ endef
 # directory with the same name (docs/, coverage/, dist/) can never shadow it —
 # make would otherwise report "'docs' is up to date" and never invoke mise.
 MISE_TASKS := lint build test e2e fmt ci pr commit license docs serve \
-	plan apply init snapshot release fuzz tidy actionlint
+	plan apply init snapshot release fuzz tidy actionlint \
+	triggers evals all report
 
 .PHONY: $(MISE_TASKS) help
 $(MISE_TASKS):

@@ -9,10 +9,18 @@
 # cloud-accounts keeps its root fan-out aggregator (environments/<name>
 # recursion) unchanged; only the leaf environments adopt this archetype.
 #
-# {{vars.tf_run}} wraps terraform with the pinned dotty (secrets/env injection)
-# by default; set tf_run = "" in the repo's root mise.toml [vars] to call
-# terraform directly. The old TF_RUN_DEPS prerequisite hack is gone — the
-# wrapper is simply on PATH like every other pinned tool.
+# hack/tf-run.sh wraps every state-touching invocation: it injects secrets/env
+# via dotty only when the module directory carries a .env.dotty and calls the
+# binary directly otherwise (dotty fails hard with nothing to inject). dotty is
+# task-scoped (a `tools` map on each task that runs the wrapper, floating on
+# {{vars.dotty_version}} — see the library config header) rather than a global
+# pin, so it never shadows a locally installed dotty outside these tasks. It
+# still installs for these tasks even when the wrapper skips it — override the
+# tasks themselves if that ever matters.
+#
+# {{vars.terraform_binary}} picks the driver: "terraform" (the shared pin) by
+# default; an OpenTofu repo sets it to "tofu" and adds the opentofu pin to its
+# root mise.toml [tools].
 #
 # The house prose format/lint is part of fmt/lint like every archetype; it
 # runs from the repo root even when make is invoked in an environment
@@ -21,36 +29,40 @@
 [init]
 description = "initialise the terraform module"
 dir = "{{cwd}}"
-run = "{{vars.tf_run}} terraform init"
+tools = { "github:bitwise-media-group/dotty" = "{{vars.dotty_version}}" }
+run = "{{config_root}}/.mise/hack/tf-run.sh {{vars.terraform_binary}} init"
 
 # Backend-less init used by lint (validate needs an initialised module but no
 # remote state).
 [init-no-backend]
 hide = true
 dir = "{{cwd}}"
-run = "{{vars.tf_run}} terraform init -backend=false -input=false"
+tools = { "github:bitwise-media-group/dotty" = "{{vars.dotty_version}}" }
+run = "{{config_root}}/.mise/hack/tf-run.sh {{vars.terraform_binary}} init -backend=false -input=false"
 
 [plan]
 description = "plan infrastructure changes"
 dir = "{{cwd}}"
-run = "{{vars.tf_run}} terraform plan -out=plan.tfplan"
+tools = { "github:bitwise-media-group/dotty" = "{{vars.dotty_version}}" }
+run = "{{config_root}}/.mise/hack/tf-run.sh {{vars.terraform_binary}} plan -out=plan.tfplan"
 
 [apply]
 description = "apply infrastructure changes"
 dir = "{{cwd}}"
-run = [{ task = "plan" }, "{{vars.tf_run}} terraform apply plan.tfplan"]
+tools = { "github:bitwise-media-group/dotty" = "{{vars.dotty_version}}" }
+run = [{ task = "plan" }, "{{config_root}}/.mise/hack/tf-run.sh {{vars.terraform_binary}} apply plan.tfplan"]
 
 # Auto-format pass wired into `fmt`.
 [tf-fmt]
 hide = true
 dir = "{{cwd}}"
-run = "terraform fmt -recursive"
+run = "{{vars.terraform_binary}} fmt -recursive"
 
 # Check-mode pass wired into `lint`.
 [tf-lint]
 hide = true
 dir = "{{cwd}}"
-run = [{ task = "init-no-backend" }, "terraform validate .", "tflint"]
+run = [{ task = "init-no-backend" }, "{{vars.terraform_binary}} validate .", "tflint"]
 
 # Doc generation wired into `docs`.
 [tf-docs]

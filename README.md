@@ -26,6 +26,7 @@ toolchain/                # this repo == the consumer's .mise/ directory
 │   ├── node-lib.toml      #   tsup build + type-check
 │   ├── docs-site.toml     #   zensical build/serve
 │   ├── markdown-lib.toml  #   prose + license only
+│   ├── agent-plugins.toml #   markdown-lib + the evolve eval suite
 │   └── terraform.toml     #   init/plan/apply + tf fmt/lint/docs
 └── mise.mk                # the whole make surface: thin forwarders to mise
 ```
@@ -98,12 +99,20 @@ precedes `lint` inside `pr`.
 ## Developer tools
 
 Every tool (`addlicense`, `golangci-lint`, `govulncheck`, `gotestsum`, `goreleaser`, `syft`, `grype`, `hadolint`,
-`helm`, `kubescape`, `shellcheck`, `terraform`, `tflint`, `terraform-docs`, `actionlint`, `evolve`, `dotty`, `prettier`,
+`helm`, `kubescape`, `shellcheck`, `terraform`, `tflint`, `terraform-docs`, `actionlint`, `prettier`,
 `markdownlint-cli2`) is pinned in `config.toml` with per-platform sha256 checksums (and, where the publisher provides
 it, cosign/SLSA/GitHub-attestation provenance) locked in `mise.lock`. Tasks run with the pinned tools already on PATH —
 there is no `.bin/`, no `tools/go.mod`, no `package.json` for linters, and no tool-path plumbing anywhere. mise installs
 a tool into its shared per-machine store the first time a task needs it (verifying the checksum) and reuses it across
 every repo.
+
+`dotty` and `evolve` are the exception: first-party CLIs, **task-scoped** (a `tools` map on just the tasks that run
+them) rather than pinned in `[tools]`, so the mise-installed copy never shadows a locally installed one on the activated
+PATH. They float on `latest` (override `dotty_version` / `evolve_version` in a repo's `[vars]` to pin) and live outside
+`mise.lock` — see the `config.toml` header for the trade-offs. The terraform archetype carries dotty for its `tf-run.sh`
+wrapper, which engages dotty only when the module directory has a `.env.dotty`; evolve only ever runs in a
+plugin/marketplace repo, so only the `agent-plugins` archetype carries it — its `lint`/`test` gates and eval tasks
+(`triggers`, `evals`, `all`, `report`) read the repo's `.evolve.{yaml,json,jsonc}`.
 
 - The tooling runtimes themselves are pins (`go`, `node`), provisioned by mise — no system Go or Node is needed.
 - Bumping a tool for the **whole fleet** is one commit here (the daily updater below, or a hand-edit of `config.toml` +
@@ -123,10 +132,10 @@ with `mise upgrade --bump && mise lock` in this directory (or `mise outdated` to
 
 Two tiers, replacing the old before-the-include make variables:
 
-| tier                           | where                   | examples                                                                                                         |
-| ------------------------------ | ----------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| structural (set once per repo) | root `mise.toml [vars]` | `app`, `app_pkg`, `build_tags`, `version_pkg`, `license_holder`, `tf_run`, `grype_fail_on`, `kubescape_severity` |
-| per-invocation (runtime)       | environment variables   | `VERSION`, `COMMIT`, `DATE`, `LDFLAGS`, `MODULE`, `FUZZ`, `FUZZTIME`, `FUZZ_PKG`, `NPM_CI_FLAGS`                 |
+| tier                           | where                   | examples                                                                                                                   |
+| ------------------------------ | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| structural (set once per repo) | root `mise.toml [vars]` | `app`, `app_pkg`, `build_tags`, `version_pkg`, `license_holder`, `terraform_binary`, `grype_fail_on`, `kubescape_severity` |
+| per-invocation (runtime)       | environment variables   | `VERSION`, `COMMIT`, `DATE`, `LDFLAGS`, `MODULE`, `FUZZ`, `FUZZTIME`, `FUZZ_PKG`, `NPM_CI_FLAGS`                           |
 
 `make build VERSION=1.2.3` still works — make exports command-line variables to the forwarded `mise run`, and the go-cli
 scripts also accept the old spellings (`APP`, `APP_PKG`, …) from the environment.
